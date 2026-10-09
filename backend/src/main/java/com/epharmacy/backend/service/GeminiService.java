@@ -16,7 +16,6 @@ public class GeminiService {
     private String apiKey;
 
     public String extractTextFromImage(MultipartFile file) throws IOException {
-        // Model version eke thibba podi typo eka (3.8 -> 1.5) hadala thiyenne
         String apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=" + apiKey;
         
         String base64Image = Base64.getEncoder().encodeToString(file.getBytes());

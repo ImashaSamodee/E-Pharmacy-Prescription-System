@@ -92,9 +92,10 @@ class _HomeScreenState extends State<HomeScreen> {
         _isLoading = true;
         _extractedText = null;
       });
-
       try {
-        String baseUrl = kIsWeb ? 'http://localhost:8080' : 'http://10.0.2.2:8080';
+        String baseUrl = (kIsWeb || defaultTargetPlatform == TargetPlatform.windows) 
+            ? 'http://localhost:8080' 
+            : 'http://10.0.2.2:8080';
         var uri = Uri.parse('$baseUrl/api/prescriptions/upload');
         
         var request = http.MultipartRequest('POST', uri);
@@ -248,7 +249,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   Future<void> _fetchPrescriptions() async {
     try {
-      String baseUrl = kIsWeb ? 'http://localhost:8080' : 'http://10.0.2.2:8080';
+      String baseUrl = (kIsWeb || defaultTargetPlatform == TargetPlatform.windows) 
+          ? 'http://localhost:8080' 
+          : 'http://10.0.2.2:8080';
       var response = await http.get(Uri.parse('$baseUrl/api/prescriptions/user/1'));
 
       if (response.statusCode == 200) {
