@@ -48,18 +48,30 @@ public class GeminiService {
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
-        try {
-            ResponseEntity<Map> response = restTemplate.postForEntity(apiUrl, entity, Map.class);
+        int maxRetries = 3;
+        for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                ResponseEntity<Map> response = restTemplate.postForEntity(apiUrl, entity, Map.class);
 
-            Map<String, Object> responseBody = response.getBody();
-            List<Map<String, Object>> candidates = (List<Map<String, Object>>) responseBody.get("candidates");
-            Map<String, Object> content = (Map<String, Object>) candidates.get(0).get("content");
-            List<Map<String, Object>> parts = (List<Map<String, Object>>) content.get("parts");
+                Map<String, Object> responseBody = response.getBody();
+                List<Map<String, Object>> candidates = (List<Map<String, Object>>) responseBody.get("candidates");
+                Map<String, Object> content = (Map<String, Object>) candidates.get(0).get("content");
+                List<Map<String, Object>> parts = (List<Map<String, Object>>) content.get("parts");
 
-            return (String) parts.get(0).get("text");
+                return (String) parts.get(0).get("text");
 
-        } catch (Exception e) {
-            return "Error extracting text: " + e.getMessage();
+            } catch (Exception e) {
+                // Retry if Google API experiences temporary spikes (503 Service Unavailable / 429 Too Many Requests)
+                if (attempt < maxRetries && e.getMessage() != null && 
+                    (e.getMessage().contains("503") || e.getMessage().contains("429") || e.getMessage().contains("UNAVAILABLE"))) {
+                    try {
+                        Thread.sleep(1500L * attempt);
+                    } catch (InterruptedException ignored) {}
+                    continue;
+                }
+                return "Error extracting text: " + e.getMessage();
+            }
         }
+        return "Error extracting text: Service temporarily unavailable after retries.";
     }
 }

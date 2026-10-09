@@ -40,10 +40,22 @@ public class PrescriptionController {
             // 3. Database eke thunduwa save kirima
             Prescription prescription = new Prescription();
             prescription.setUser(optionalUser.get());
-            // Aththatama nam meka AWS S3 wage upload karala link eka ganna one, danata api file name eka demu
             prescription.setImageUrl(file.getOriginalFilename());
-            prescription.setExtractedText(extractedText);
-            prescription.setStatus("PROCESSED");
+
+            boolean isError = extractedText == null 
+                || extractedText.startsWith("Error extracting text:")
+                || extractedText.contains("\"error\":")
+                || extractedText.contains("503")
+                || extractedText.contains("cannot be viewed")
+                || extractedText.contains("raw binary data");
+
+            if (isError) {
+                prescription.setStatus("REJECTED");
+                prescription.setExtractedText("Could not read prescription details clearly. Please upload a clearer photo of the prescription.");
+            } else {
+                prescription.setStatus("PROCESSED");
+                prescription.setExtractedText(extractedText);
+            }
 
             Prescription savedPrescription = prescriptionRepository.save(prescription);
 
@@ -61,6 +73,20 @@ public class PrescriptionController {
             return ResponseEntity.ok(prescriptionRepository.findByUserId(userId));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error fetching prescriptions: " + e.getMessage());
+        }
+    }
+
+    // Thunduwa delete karanna API eka
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePrescription(@PathVariable Long id) {
+        try {
+            if (!prescriptionRepository.existsById(id)) {
+                return ResponseEntity.notFound().build();
+            }
+            prescriptionRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error deleting: " + e.getMessage());
         }
     }
 }
