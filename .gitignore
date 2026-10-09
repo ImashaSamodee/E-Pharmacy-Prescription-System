@@ -1,0 +1,138 @@
+# ==============================================================================
+# Root .gitignore for EPharmacy System (Flutter Frontend + Spring Boot Backend)
+# ==============================================================================
+
+# --- Operating System Files ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+
+# --- General IDE & Editor Files ---
+.vscode/
+*.code-workspace
+.history/
+*.sublime-project
+*.sublime-workspace
+
+# IntelliJ / Android Studio
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/usage.statistics.xml
+.idea/shelf/
+.idea/dictionaries/
+.idea/dataSources/
+.idea/dataSources.local.xml
+.idea/httpRequests/
+.idea/caches/
+.idea/contentModel.xml
+*.iws
+*.ipr
+*.iml
+
+# --- Environment & Secret Files ---
+.env
+.env.local
+.env.*.local
+*.key
+*.keystore
+*.jks
+*.p12
+
+# --- Logs & Temporary Files ---
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
+# ==============================================================================
+# Backend (Java / Spring Boot / Maven)
+# ==============================================================================
+target/
+backend/target/
+*.class
+
+# Maven Wrapper JAR
+.mvn/wrapper/maven-wrapper.jar
+backend/.mvn/wrapper/maven-wrapper.jar
+
+# Spring Tool Suite (STS) / Eclipse
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+backend/.apt_generated
+backend/.classpath
+backend/.factorypath
+backend/.project
+backend/.settings/
+backend/.springBeans
+backend/.sts4-cache
+
+# NetBeans
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+backend/nbproject/private/
+backend/nbbuild/
+backend/dist/
+backend/nbdist/
+backend/.nb-gradle/
+
+# ==============================================================================
+# Frontend (Flutter / Dart)
+# ==============================================================================
+# Dart & Flutter tooling
+.dart_tool/
+frontend/.dart_tool/
+.flutter-plugins-dependencies
+frontend/.flutter-plugins-dependencies
+.pub-cache/
+frontend/.pub-cache/
+.pub/
+frontend/.pub/
+build/
+frontend/build/
+coverage/
+frontend/coverage/
+
+# Symbolication & Obfuscation
+app.*.symbols
+app.*.map.json
+
+# Android Specific
+android/local.properties
+frontend/android/local.properties
+android/.gradle/
+frontend/android/.gradle/
+frontend/android/app/debug/
+frontend/android/app/profile/
+frontend/android/app/release/
+
+# iOS Specific
+frontend/ios/Flutter/.last_build_id
+frontend/ios/Flutter/Flutter.framework
+frontend/ios/Flutter/Flutter.podspec
+frontend/ios/Flutter/Generated.xcconfig
+frontend/ios/Flutter/app.framework
+frontend/ios/.symlinks/
+frontend/ios/Pods/
+frontend/ios/.last_build_id
+ios/.symlinks/
+ios/Pods/
+
+# Desktop / Web Ephemeral
+frontend/windows/flutter/ephemeral/
+frontend/linux/flutter/ephemeral/
+frontend/macos/Flutter/ephemeral/
