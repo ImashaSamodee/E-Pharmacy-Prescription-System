@@ -2,11 +2,18 @@ package com.epharmacy.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
 
     @Id
@@ -22,9 +29,26 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(columnDefinition = "ENUM('PATIENT', 'ADMIN') DEFAULT 'PATIENT'")
-    private String role;
+    @Column(length = 30)
+    private String phone;
 
-    @Column(name = "created_at", updatable = false, insertable = false)
+    @Column(length = 255)
+    private String address;
+
+    @Column(length = 20)
+    @Builder.Default
+    private String role = "PATIENT"; // PATIENT, ADMIN, PHARMACIST
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+        if (role == null) {
+            role = "PATIENT";
+        }
+    }
 }

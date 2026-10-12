@@ -1,8 +1,11 @@
 # ==============================================================================
-# Root .gitignore for EPharmacy System (Flutter Frontend + Spring Boot Backend)
+# EPharmacy System - Master .gitignore
+# Covers Flutter Mobile Frontend + Spring Boot Backend + MySQL + IDEs
 # ==============================================================================
 
-# --- Operating System Files ---
+# ------------------------------------------------------------------------------
+# 1. Operating System Files
+# ------------------------------------------------------------------------------
 .DS_Store
 .DS_Store?
 ._*
@@ -12,29 +15,24 @@ ehthumbs.db
 Thumbs.db
 [Dd]esktop.ini
 
-# --- General IDE & Editor Files ---
+# ------------------------------------------------------------------------------
+# 2. General IDEs & Editors
+# ------------------------------------------------------------------------------
 .vscode/
 *.code-workspace
 .history/
 *.sublime-project
 *.sublime-workspace
 
-# IntelliJ / Android Studio
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/usage.statistics.xml
-.idea/shelf/
-.idea/dictionaries/
-.idea/dataSources/
-.idea/dataSources.local.xml
-.idea/httpRequests/
-.idea/caches/
-.idea/contentModel.xml
+# IntelliJ IDEA / Android Studio
+.idea/
 *.iws
 *.ipr
 *.iml
 
-# --- Environment & Secret Files ---
+# ------------------------------------------------------------------------------
+# 3. Environment, Secrets & Local Overrides
+# ------------------------------------------------------------------------------
 .env
 .env.local
 .env.*.local
@@ -42,27 +40,32 @@ Thumbs.db
 *.keystore
 *.jks
 *.p12
+application-local.properties
+*application-local.properties
 
-# --- Logs & Temporary Files ---
+# ------------------------------------------------------------------------------
+# 4. Logs & Temp Files
+# ------------------------------------------------------------------------------
 *.log
 *.tmp
 *.bak
 *.swp
 *.swo
 *~
+.gemini/
 
-# ==============================================================================
-# Backend (Java / Spring Boot / Maven)
-# ==============================================================================
+# ------------------------------------------------------------------------------
+# 5. Backend (Java / Spring Boot 3 / Maven)
+# ------------------------------------------------------------------------------
 target/
 backend/target/
 *.class
 
-# Maven Wrapper JAR
+# Maven wrapper jar (can be downloaded by mvnw)
 .mvn/wrapper/maven-wrapper.jar
 backend/.mvn/wrapper/maven-wrapper.jar
 
-# Spring Tool Suite (STS) / Eclipse
+# Spring Tool Suite (STS) & Eclipse
 .apt_generated
 .classpath
 .factorypath
@@ -90,12 +93,20 @@ backend/dist/
 backend/nbdist/
 backend/.nb-gradle/
 
-# ==============================================================================
-# Frontend (Flutter / Dart)
-# ==============================================================================
-# Dart & Flutter tooling
+# Uploaded Prescription Images (keep folder via .gitkeep)
+backend/uploads/*
+!backend/uploads/.gitkeep
+uploads/*
+!uploads/.gitkeep
+
+# ------------------------------------------------------------------------------
+# 6. Frontend (Flutter / Dart / Web / Android / iOS / Desktop)
+# ------------------------------------------------------------------------------
+# Flutter / Dart tooling & builds
 .dart_tool/
 frontend/.dart_tool/
+.flutter-plugins
+frontend/.flutter-plugins
 .flutter-plugins-dependencies
 frontend/.flutter-plugins-dependencies
 .pub-cache/
@@ -111,16 +122,19 @@ frontend/coverage/
 app.*.symbols
 app.*.map.json
 
-# Android Specific
+# Android
 android/local.properties
 frontend/android/local.properties
 android/.gradle/
 frontend/android/.gradle/
+android/app/debug/
 frontend/android/app/debug/
+android/app/profile/
 frontend/android/app/profile/
+android/app/release/
 frontend/android/app/release/
 
-# iOS Specific
+# iOS
 frontend/ios/Flutter/.last_build_id
 frontend/ios/Flutter/Flutter.framework
 frontend/ios/Flutter/Flutter.podspec
@@ -132,7 +146,7 @@ frontend/ios/.last_build_id
 ios/.symlinks/
 ios/Pods/
 
-# Desktop / Web Ephemeral
+# Desktop / Web Ephemerals
 frontend/windows/flutter/ephemeral/
 frontend/linux/flutter/ephemeral/
 frontend/macos/Flutter/ephemeral/

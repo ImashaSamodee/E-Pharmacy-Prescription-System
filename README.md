@@ -1,163 +1,200 @@
-# 💊 E-Pharmacy & Prescription System
+# 🏥 MediCare LK - Full-Stack AI E-Pharmacy & Prescription System
 
-An AI-powered E-Pharmacy and Prescription Processing System designed to simplify medicine ordering and prescription digitization. The application enables users to capture or upload medical prescriptions, automatically extracts medicine details and dosage instructions using **Google Gemini Vision AI**, and manages user prescription history.
+[![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter&logoColor=white)](https://flutter.dev/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Java](https://img.shields.io/badge/Java-17%2F25-ED8B00?logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![Google Gemini](https://img.shields.io/badge/AI-Gemini%20Vision%20OCR-8E75C2?logo=google&logoColor=white)](https://ai.google.dev/)
+[![Currency](https://img.shields.io/badge/Currency-LKR%20(Rs.)-00A389)](#)
 
----
-
-## 🌟 Key Features
-
-- 📸 **Smart Prescription Scanner**: Capture photos of prescriptions using camera or upload from gallery.
-- 🤖 **AI-Powered OCR**: Analyzes doctor's handwriting and printed prescriptions via **Google Gemini API** to extract medicine names, dosages, and instructions.
-- 📜 **Prescription History**: View past uploaded prescriptions and their extraction status.
-- 🔐 **User Management**: Associate uploaded prescriptions and orders with specific user profiles.
-- 🌐 **Cross-Platform Support**: Frontend built with Flutter (Android, iOS, Web, Desktop).
-- ⚡ **Robust REST API**: High-performance Spring Boot backend connected with MySQL.
+A modern, full-stack E-Pharmacy mobile application and web administration portal developed with **Flutter** (Material 3 healthcare theme `#0D9488`), **Spring Boot 3 REST APIs**, **Spring Security + JWT**, and **MySQL**. The system integrates **Google Gemini Vision AI** to digitize handwritten and printed prescriptions, extract medicine details with confidence scores, and deliver end-to-end pharmacy ordering and tracking in Sri Lankan Rupees (LKR).
 
 ---
 
-## 🛠️ Tech Stack & Architecture
+## 📱 Complete Screens & Features (Matching Mockup Design)
 
-### **Frontend**
-- **Framework**: [Flutter](https://flutter.dev/) (Dart SDK `^3.12.2`)
-- **UI Components**: Material 3 Design
-- **Key Packages**:
-  - `image_picker` (Camera & Gallery image selection)
-  - `http` & `http_parser` (Multipart HTTP REST API communication)
-
-### **Backend**
-- **Framework**: [Spring Boot](https://spring.io/projects/spring-boot) (Java 17)
-- **Database ORM**: Spring Data JPA & Hibernate
-- **Database**: MySQL (`epharmacy_db`)
-- **AI Integration**: Google Gemini Vision API (`generativelanguage.googleapis.com`)
-- **Build Tool**: Apache Maven (`mvnw`)
-- **Utilities**: Lombok
+| # | Screen | Description |
+|---|---|---|
+| **1** | **Login / Register** | Exact **MediCare LK** healthcare branding, vector doctor hero graphic, email & password authentication, remember me, Google & Phone (+94) sign-in, 1-tap demo access, and smooth Create Account registration. |
+| **2** | **Home / Store** | Live search bar, category chips (*Pain relief*, *Cold & Flu*, *Supplements*, *First Aid*), 20% OFF promo banner, and popular medicines grid with real LKR pricing. |
+| **3** | **AI Prescription Scan** | Take photo / Upload from gallery, Google Gemini Vision OCR extraction, confidence ratings (96%, 95%, 92%), and recent scan cards (`#EP1024`, `#EP1018`). |
+| **4** | **Extracted Medicines / Cart** | Interactive medicine list with selection checkboxes, quantity steppers (+/-), real-time LKR price recalculation, and sticky footer checkout bar. |
+| **5** | **Checkout & Payment** | Delivery address editor (*Kasun Perera, Galle Rd, Colombo*), order summary breakdown, Card Payment (Stripe simulation), and Cash on Delivery (COD). |
+| **6** | **Order Tracking** | Real-time status stepper (**Pending ➔ Processing ➔ Shipped ➔ Delivered**), estimated delivery banner, and order item details. |
+| **7** | **Order History** | Status filter chips (*All*, *Processing*, *Delivered*, *Cancelled*), past orders cards (`#EP1024`, `#EP1018`, `#EP1006`, `#EP0998`), and tap-to-track. |
+| **8** | **User Profile** | Personal information, delivery addresses, payment methods, notifications drawer, and direct toggle to Pharmacist Admin mode. |
+| **9** | **Pharmacist Admin Portal** | Dedicated web dashboard (`/admin/index.html`) & mobile admin screen for prescription verification, medicine pricing, order status transitions, and inventory control. |
 
 ---
 
-## 📁 Project Structure
+## 🏗️ System Architecture & Tech Stack
 
 ```plaintext
 EPharmacy_System/
-├── backend/                              # Spring Boot REST API
+├── backend/                                  # Spring Boot 3 Java Backend
 │   ├── src/main/java/com/epharmacy/backend/
-│   │   ├── controller/                   # REST Controllers (Prescription, User)
-│   │   ├── entity/                       # JPA Entities (User, Prescription, Medicine)
-│   │   ├── repository/                   # Spring Data Repositories
-│   │   └── service/                      # Business Logic & Gemini AI Service
+│   │   ├── config/                           # Data seeding & CORS configuration
+│   │   ├── controller/                       # REST APIs (Auth, Medicine, Prescription, Order, Admin)
+│   │   ├── dto/                              # Request/Response Data Transfer Objects
+│   │   ├── entity/                           # JPA Entities (User, Medicine, Prescription, Order, etc.)
+│   │   ├── repository/                       # Spring Data JPA Repositories
+│   │   ├── security/                         # Spring Security filter & JWT utilities
+│   │   └── service/                          # Business logic & Gemini Vision AI service
 │   ├── src/main/resources/
-│   │   └── application.properties        # Backend configurations & DB credentials
-│   ├── pom.xml                           # Maven dependencies
-│   └── mvnw / mvnw.cmd                   # Maven wrapper
+│   │   ├── static/admin/index.html           # Pharmacist Admin Web Dashboard
+│   │   └── application.properties            # Database and Gemini API credentials
+│   ├── uploads/                              # Stored prescription images (.gitkeep protected)
+│   └── pom.xml                               # Maven project dependencies
 │
-├── frontend/                             # Flutter Cross-Platform Application
+├── frontend/                                 # Flutter Mobile & Web Client
 │   ├── lib/
-│   │   └── main.dart                     # UI screens, camera picker, API integration
-│   ├── pubspec.yaml                      # Flutter dependencies
-│   ├── android/                          # Android native configuration
-│   ├── ios/                              # iOS native configuration
-│   └── web/                              # Web configuration
+│   │   ├── models/                           # Dart data models
+│   │   ├── screens/                          # 9 complete UI screens
+│   │   ├── services/                         # REST API service with auto-platform IP resolution
+│   │   ├── state/                            # Global state management singleton
+│   │   └── main.dart                         # Main entry point, theme & BottomNavigationBar
+│   ├── assets/images/                        # High-definition UI assets and vector graphics
+│   └── pubspec.yaml                          # Flutter dependencies
 │
-├── .gitignore                            # Unified root gitignore
-└── README.md                             # Project documentation
+├── .gitignore                                # Comprehensive master gitignore
+└── README.md                                 # Full documentation
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🔑 Demo Credentials
 
-### Prerequisites
+Pre-seeded database accounts available for immediate testing:
 
-Ensure you have the following installed on your system:
-- **Java Development Kit (JDK 17 or higher)**
-- **MySQL Server** (running locally or remotely)
-- **Flutter SDK** (`>= 3.12.2`) & Dart
+| Role | Email | Password | Default Data |
+|---|---|---|---|
+| **Patient (Kasun Perera)** | `kasun@email.com` | `123456` | Active orders `#EP1024`, `#EP1018`, prescriptions, cart items |
+| **Pharmacist Admin** | `pharmacist@medicare.lk` | `admin123` | Full access to Web Dashboard & Mobile Admin management |
+
+---
+
+## ⚡ Quick Start & Run Guide
+
+### 1. Prerequisites
+- **Java JDK 17 or higher** (JDK 25 compatible)
+- **MySQL Server 8.0+** running on `localhost:3306`
+- **Flutter SDK `^3.12.2`** & Dart
 - **Git**
-- A **Google Gemini API Key** (from [Google AI Studio](https://aistudio.google.com/))
 
 ---
 
-### 1. Backend Setup (Spring Boot)
+### 2. Database Setup (MySQL)
+Create the database in MySQL:
+```sql
+CREATE DATABASE epharmacy_db;
+```
 
-1. **Configure MySQL Database:**
-   Create a database in MySQL:
-   ```sql
-   CREATE DATABASE epharmacy_db;
-   ```
-
-2. **Configure `application.properties`:**
-   Navigate to [backend/src/main/resources/application.properties](file:///c:/Users/23IT0470/Desktop/EPharmacy_System/backend/src/main/resources/application.properties) and verify your MySQL credentials:
-   ```properties
-   spring.application.name=epharmacy_db
-   spring.datasource.url=jdbc:mysql://localhost:3306/epharmacy_db
-   spring.datasource.username=root
-   spring.datasource.password=YOUR_MYSQL_PASSWORD
-   spring.jpa.hibernate.ddl-auto=update
-   server.port=8080
-
-   # Set your Gemini API key (or pass via environment variable GEMINI_API_KEY)
-   gemini.api.key=${GEMINI_API_KEY:YOUR_GEMINI_API_KEY}
-   ```
-
-3. **Run the Backend:**
-   Open a terminal in the `backend` folder:
-   ```bash
-   cd backend
-   ./mvnw spring-boot:run
-   ```
-   Or on Windows:
-   ```cmd
-   mvnw.cmd spring-boot:run
-   ```
-   The backend server will start on `http://localhost:8080`.
+Check [backend/src/main/resources/application.properties](file:///c:/Users/23IT0470/Desktop/EPharmacy_System/backend/src/main/resources/application.properties) credentials:
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/epharmacy_db
+spring.datasource.username=root
+spring.datasource.password=0408
+spring.jpa.hibernate.ddl-auto=update
+```
 
 ---
 
-### 2. Frontend Setup (Flutter)
+### 3. Run Backend (Spring Boot)
+Open a terminal in the `backend` folder:
+```powershell
+cd backend
+.\mvnw spring-boot:run
+```
+* The backend will start on **`http://localhost:8080`**.
+* Initial sample data (medicines, users, sample prescriptions, and orders) is automatically seeded on first launch.
 
-1. **Install Dependencies:**
-   Open a terminal in the `frontend` folder:
-   ```bash
-   cd frontend
-   flutter pub get
-   ```
-
-2. **Configure API URL (if running on Android Emulator or Physical Device):**
-   In [frontend/lib/main.dart](file:///c:/Users/23IT0470/Desktop/EPharmacy_System/frontend/lib/main.dart):
-   - For **Chrome / Web**: `http://localhost:8080`
-   - For **Android Emulator**: `http://10.0.2.2:8080`
-   - For **Physical Device**: `http://<YOUR_LOCAL_IP>:8080`
-
-3. **Run the App:**
-   ```bash
-   flutter run
-   ```
+> 💡 **Troubleshooting Port 8080:** If you ever see `Port 8080 was already in use`, run this PowerShell command to clear the process:
+> ```powershell
+> Stop-Process -Id (Get-NetTCPConnection -LocalPort 8080).OwningProcess -Force
+> ```
 
 ---
 
-## 📡 API Endpoints
+### 4. Run Frontend (Flutter)
+In a second terminal, navigate to the `frontend` folder:
+```powershell
+cd frontend
+flutter pub get
 
-### 🩺 Prescription Management
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/prescriptions/upload` | Uploads prescription image & extracts medicine details via Gemini AI |
-| `GET` | `/api/prescriptions/user/{userId}` | Retrieves prescription history for a specific user |
+# Run on Google Chrome (Web):
+flutter run -d chrome
 
-### 👤 User Management
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/users/register` | Registers a new user |
-| `GET` | `/api/users/{id}` | Fetches user details |
+# Or run on Windows Desktop:
+flutter run -d windows
+```
 
----
-
-## 🔒 Security Best Practices
-
-- Never commit sensitive API keys or credentials directly to public repositories.
-- Use environment variables (e.g., `GEMINI_API_KEY`) to manage third-party service credentials securely.
+> 💡 **Hot Restart:** When updating assets or state during development, press **`R` (Shift + R)** in your Flutter terminal.
 
 ---
 
-## 👥 Contributors
+### 5. Access Pharmacist Web Admin Portal
+While the Spring Boot backend is running, open the responsive web portal in any browser:
+```
+http://localhost:8080/admin/index.html
+```
+Features:
+- Live review of prescription requests with AI confidence tags
+- Prescription approval / rejection with pricing assignment
+- Order status updates (Pending ➔ Processing ➔ Shipped ➔ Delivered)
+- Inventory management and price editing
 
-- **Imasha Samodee** - [GitHub Profile](https://github.com/ImashaSamodee)
-- Repository: [E-Pharmacy-Prescription-System](https://github.com/ImashaSamodee/E-Pharmacy-Prescription-System.git)
+---
+
+## 📡 REST API Reference
+
+### 🔐 Authentication (`/api/auth`)
+- `POST /api/auth/login` - Authenticate user & issue JWT token
+- `POST /api/auth/register` - Register patient or pharmacist
+- `GET /api/auth/user/{id}` - Fetch user profile
+- `PUT /api/auth/profile/{id}` - Update profile & delivery address
+
+### 💊 Medicine Catalog (`/api/medicines`)
+- `GET /api/medicines` - Get all medicines (filter by `?category=` or `?search=`)
+- `GET /api/medicines/{id}` - Get medicine details
+- `POST /api/medicines` - Create new medicine (Admin)
+- `PUT /api/medicines/{id}` - Update price and stock (Admin)
+- `DELETE /api/medicines/{id}` - Delete medicine (Admin)
+
+### 🩺 Prescriptions & AI OCR (`/api/prescriptions`)
+- `POST /api/prescriptions/upload` - Upload image & extract medicines with Gemini Vision
+- `GET /api/prescriptions/user/{userId}` - User's uploaded prescriptions
+- `GET /api/prescriptions/all` - All prescriptions (filter by `?status=`)
+- `PUT /api/prescriptions/{id}/review` - Approve/Reject prescription with notes & pricing
+
+### 📦 Orders (`/api/orders`)
+- `POST /api/orders` - Place order with delivery address & payment method
+- `GET /api/orders/user/{userId}` - User order history
+- `GET /api/orders/track/{orderNumber}` - Real-time tracking for an order (e.g. `#EP1024`)
+- `GET /api/orders/all` - All orders (Admin)
+- `PUT /api/orders/{id}/status` - Advance order status
+
+### 💳 Payments & Notifications (`/api/payment`, `/api/notifications`)
+- `POST /api/payment/stripe-intent` - Generate Stripe payment intent simulation
+- `POST /api/payment/stripe-confirm` - Confirm card payment
+- `GET /api/notifications/user/{userId}` - Fetch user status notifications
+
+---
+
+## 🎨 Design System & Colors
+
+- **Primary Teal**: `#0A6A64` / `#0D9488`
+- **Secondary Mint**: `#CCFBF1` / `#E6F7F5`
+- **Background**: `#FFFFFF` / `#F8FAFC`
+- **Text Dark**: `#0F172A`
+- **Text Muted**: `#64748B`
+- **Border**: `#E2E8F0`
+- **Status Badges**:
+  - `Pending`: Amber (`#F59E0B`)
+  - `Processing`: Blue (`#3B82F6`)
+  - `Delivered / Approved`: Emerald (`#10B981`)
+  - `Cancelled / Rejected`: Rose (`#EF4444`)
+
+---
+
+## 📄 License
+This project is licensed under the MIT License - feel free to use and adapt for academic and commercial purposes.
