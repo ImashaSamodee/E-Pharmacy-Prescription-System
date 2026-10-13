@@ -185,13 +185,30 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: 28),
+              // 1. Doctor Banner at the VERY TOP (above MediCare LK)
+              SizedBox(
+                width: double.infinity,
+                height: 145,
+                child: Image.asset(
+                  'assets/images/doctor_illustration.png',
+                  fit: BoxFit.cover,
+                  filterQuality: FilterQuality.high,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      'assets/images/doctor_banner.jpg',
+                      fit: BoxFit.cover,
+                      filterQuality: FilterQuality.high,
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 10),
 
-              // MediCare LK Logo Header
+              // 2. MediCare LK Logo Header
               _buildBrandLogoRow(),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
 
-              // Headings
+              // 3. Headings
               const Text(
                 'Welcome Back!',
                 style: TextStyle(
@@ -210,25 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: 6),
-
-              // Compact Doctor Graphic with bottom wave
-              SizedBox(
-                width: double.infinity,
-                height: 122,
-                child: Image.asset(
-                  'assets/images/doctor_illustration.png',
-                  fit: BoxFit.cover,
-                  filterQuality: FilterQuality.high,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Image.asset(
-                      'assets/images/doctor_banner.jpg',
-                      fit: BoxFit.cover,
-                      filterQuality: FilterQuality.high,
-                    );
-                  },
-                ),
-              ),
+              const SizedBox(height: 12),
 
               // Form fields
               Padding(
@@ -458,10 +457,23 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(height: 28),
-          _buildBrandLogoRow(),
-          const SizedBox(height: 8),
+          // 1. Doctor Banner at the VERY TOP (above MediCare LK)
+          SizedBox(
+            width: double.infinity,
+            height: 125,
+            child: Image.asset(
+              'assets/images/doctor_illustration.png',
+              fit: BoxFit.cover,
+              filterQuality: FilterQuality.high,
+            ),
+          ),
+          const SizedBox(height: 10),
 
+          // 2. MediCare LK Logo
+          _buildBrandLogoRow(),
+          const SizedBox(height: 6),
+
+          // 3. Headings
           const Text(
             'Create Account',
             style: TextStyle(
@@ -480,18 +492,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 6),
-
-          // Compact doctor banner
-          SizedBox(
-            width: double.infinity,
-            height: 100,
-            child: Image.asset(
-              'assets/images/doctor_illustration.png',
-              fit: BoxFit.cover,
-              filterQuality: FilterQuality.high,
-            ),
-          ),
+          const SizedBox(height: 12),
 
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 22.0),
