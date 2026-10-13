@@ -212,22 +212,22 @@ class _LoginScreenState extends State<LoginScreen> {
               const Text(
                 'Welcome Back!',
                 style: TextStyle(
-                  fontSize: 21,
+                  fontSize: 25,
                   fontWeight: FontWeight.w800,
                   color: Color(0xFF0F172A),
-                  letterSpacing: -0.4,
+                  letterSpacing: -0.5,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: 3),
               const Text(
                 'Sign in to your account to continue',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 14,
                   color: Color(0xFF64748B),
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
 
               // Form fields
               Padding(
@@ -268,21 +268,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         Row(
                           children: [
                             SizedBox(
-                              width: 20,
-                              height: 20,
+                              width: 22,
+                              height: 22,
                               child: Checkbox(
                                 value: _rememberMe,
                                 activeColor: const Color(0xFF0A6A64),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                                side: const BorderSide(color: Color(0xFF94A3B8), width: 1.4),
+                                side: const BorderSide(color: Color(0xFF94A3B8), width: 1.5),
                                 onChanged: (val) => setState(() => _rememberMe = val ?? true),
                               ),
                             ),
-                            const SizedBox(width: 6),
+                            const SizedBox(width: 8),
                             const Text(
                               'Remember me',
                               style: TextStyle(
-                                fontSize: 12.5,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xFF475569),
                               ),
@@ -301,7 +301,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: const Text(
                             'Forgot password?',
                             style: TextStyle(
-                              fontSize: 12.5,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: Color(0xFF0284C7),
                             ),
@@ -309,11 +309,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 16),
 
                     // Sign In Button
                     SizedBox(
-                      height: 46,
+                      height: 50,
                       child: ElevatedButton(
                         onPressed: _isLoading ? null : _handleAuth,
                         style: ElevatedButton.styleFrom(
@@ -322,14 +322,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           elevation: 2,
                           shadowColor: const Color(0x330A6A64),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(23),
+                            borderRadius: BorderRadius.circular(25),
                           ),
                         ),
                         child: _isLoading
                             ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.2),
                               )
                             : Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -337,29 +337,29 @@ class _LoginScreenState extends State<LoginScreen> {
                                   Text(
                                     'Sign In',
                                     style: TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 16.5,
                                       fontWeight: FontWeight.w700,
                                       letterSpacing: 0.2,
                                     ),
                                   ),
                                   SizedBox(width: 8),
-                                  Icon(Icons.arrow_forward_rounded, size: 18),
+                                  Icon(Icons.arrow_forward_rounded, size: 20),
                                 ],
                               ),
                       ),
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 16),
 
                     // OR Divider
                     Row(
                       children: const [
                         Expanded(child: Divider(color: Color(0xFFE2E8F0), thickness: 1)),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12.0),
+                          padding: EdgeInsets.symmetric(horizontal: 14.0),
                           child: Text(
                             'OR',
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 12.5,
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF94A3B8),
                             ),
@@ -368,7 +368,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Expanded(child: Divider(color: Color(0xFFE2E8F0), thickness: 1)),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 14),
 
                     // Continue with Google
                     _buildSocialButton(
@@ -376,11 +376,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           _buildGoogleIcon(),
-                          const SizedBox(width: 10),
+                          const SizedBox(width: 12),
                           const Text(
                             'Continue with Google',
                             style: TextStyle(
-                              fontSize: 13.5,
+                              fontSize: 15,
                               fontWeight: FontWeight.w600,
                               color: Color(0xFF1E293B),
                             ),
@@ -389,19 +389,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       onTap: () => _quickLogin('kasun@email.com', '123456'),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 12),
 
                     // Continue with Phone (+94)
                     _buildSocialButton(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: const [
-                          Icon(Icons.phone_rounded, color: Color(0xFF0A6A64), size: 18),
-                          SizedBox(width: 10),
+                          Icon(Icons.phone_rounded, color: Color(0xFF0A6A64), size: 20),
+                          SizedBox(width: 12),
                           Text(
                             'Continue with Phone (+94)',
                             style: TextStyle(
-                              fontSize: 13.5,
+                              fontSize: 15,
                               fontWeight: FontWeight.w600,
                               color: Color(0xFF1E293B),
                             ),
@@ -410,7 +410,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       onTap: () => _quickLogin('kasun@email.com', '123456'),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 18),
 
                     // Bottom Link: Don't have an account? Create account
                     Row(
@@ -419,7 +419,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         const Text(
                           "Don't have an account? ",
                           style: TextStyle(
-                            fontSize: 12.5,
+                            fontSize: 14,
                             color: Color(0xFF64748B),
                             fontWeight: FontWeight.w500,
                           ),
@@ -429,7 +429,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: const Text(
                             'Create account',
                             style: TextStyle(
-                              fontSize: 12.5,
+                              fontSize: 14.5,
                               fontWeight: FontWeight.w700,
                               color: Color(0xFF0284C7),
                               decoration: TextDecoration.underline,
@@ -477,22 +477,22 @@ class _LoginScreenState extends State<LoginScreen> {
           const Text(
             'Create Account',
             style: TextStyle(
-              fontSize: 21,
+              fontSize: 25,
               fontWeight: FontWeight.w800,
               color: Color(0xFF0F172A),
-              letterSpacing: -0.4,
+              letterSpacing: -0.5,
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 3),
           const Text(
             'Join MediCare LK to order medicines & refills',
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 14,
               color: Color(0xFF64748B),
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
 
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 22.0),
@@ -654,8 +654,8 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 34,
-              height: 34,
+              width: 38,
+              height: 38,
               decoration: BoxDecoration(
                 color: const Color(0xFF00A389),
                 borderRadius: BorderRadius.circular(10),
@@ -670,13 +670,13 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  const Icon(Icons.add_rounded, color: Colors.white, size: 24),
+                  const Icon(Icons.add_rounded, color: Colors.white, size: 26),
                   Positioned(
                     right: 4,
                     bottom: 4,
                     child: Container(
-                      width: 6,
-                      height: 6,
+                      width: 7,
+                      height: 7,
                       decoration: const BoxDecoration(
                         color: Color(0xFF86EFAC),
                         shape: BoxShape.circle,
@@ -686,14 +686,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
             RichText(
               text: const TextSpan(
                 children: [
                   TextSpan(
                     text: 'MediCare ',
                     style: TextStyle(
-                      fontSize: 21,
+                      fontSize: 23,
                       fontWeight: FontWeight.w800,
                       color: Color(0xFF0A3A40),
                       letterSpacing: -0.4,
@@ -703,7 +703,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextSpan(
                     text: 'LK',
                     style: TextStyle(
-                      fontSize: 21,
+                      fontSize: 23,
                       fontWeight: FontWeight.w800,
                       color: Color(0xFF00A389),
                       letterSpacing: -0.4,
@@ -715,11 +715,11 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 3),
         const Text(
           'Your Health, Our Care',
           style: TextStyle(
-            fontSize: 11,
+            fontSize: 12.5,
             fontWeight: FontWeight.w600,
             color: Color(0xFF64748B),
             letterSpacing: 0.3,
@@ -739,11 +739,11 @@ class _LoginScreenState extends State<LoginScreen> {
     TextInputType? keyboardType,
   }) {
     return Container(
-      height: 46,
+      height: 50,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE2E8F0), width: 1.1),
+        border: Border.all(color: const Color(0xFFE2E8F0), width: 1.2),
         boxShadow: const [
           BoxShadow(
             color: Color(0x06000000),
@@ -757,25 +757,25 @@ class _LoginScreenState extends State<LoginScreen> {
         obscureText: obscureText,
         keyboardType: keyboardType,
         style: const TextStyle(
-          fontSize: 13.5,
+          fontSize: 15,
           fontWeight: FontWeight.w500,
           color: Color(0xFF0F172A),
         ),
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: const TextStyle(
-            fontSize: 13.5,
+            fontSize: 14.5,
             fontWeight: FontWeight.w400,
             color: Color(0xFF94A3B8),
           ),
           prefixIcon: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Icon(icon, color: const Color(0xFF64748B), size: 19),
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: Icon(icon, color: const Color(0xFF64748B), size: 21),
           ),
-          prefixIconConstraints: const BoxConstraints(minWidth: 42, minHeight: 42),
+          prefixIconConstraints: const BoxConstraints(minWidth: 46, minHeight: 46),
           suffixIcon: suffixIcon,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         ),
       ),
     );
@@ -787,11 +787,11 @@ class _LoginScreenState extends State<LoginScreen> {
     required VoidCallback onTap,
   }) {
     return Container(
-      height: 44,
+      height: 48,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE2E8F0), width: 1.1),
+        border: Border.all(color: const Color(0xFFE2E8F0), width: 1.2),
         boxShadow: const [
           BoxShadow(
             color: Color(0x04000000),
@@ -811,62 +811,17 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Google G Icon
+  // Official Real Google G Logo Icon
   Widget _buildGoogleIcon() {
-    return SizedBox(
-      width: 18,
-      height: 18,
-      child: CustomPaint(
-        painter: _GoogleLogoPainter(),
-      ),
+    return Image.asset(
+      'assets/images/google_logo.png',
+      width: 22,
+      height: 22,
+      fit: BoxFit.contain,
+      filterQuality: FilterQuality.high,
+      errorBuilder: (context, error, stackTrace) {
+        return const Icon(Icons.g_mobiledata_rounded, color: Colors.red, size: 26);
+      },
     );
   }
-}
-
-// Custom Painter for Google Multi-color 'G'
-class _GoogleLogoPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final double w = size.width;
-    final double h = size.height;
-    final center = Offset(w / 2, h / 2);
-    final radius = w / 2;
-
-    final paintBlue = Paint()
-      ..color = const Color(0xFF4285F4)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.0;
-
-    final paintGreen = Paint()
-      ..color = const Color(0xFF34A853)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.0;
-
-    final paintYellow = Paint()
-      ..color = const Color(0xFFFBBC05)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.0;
-
-    final paintRed = Paint()
-      ..color = const Color(0xFFEA4335)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.0;
-
-    final rect = Rect.fromCircle(center: center, radius: radius - 1.5);
-
-    canvas.drawArc(rect, -0.6, 1.4, false, paintBlue);
-    canvas.drawArc(rect, 0.8, 1.4, false, paintGreen);
-    canvas.drawArc(rect, 2.2, 1.1, false, paintYellow);
-    canvas.drawArc(rect, 3.3, 1.5, false, paintRed);
-
-    final linePaint = Paint()
-      ..color = const Color(0xFF4285F4)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.0
-      ..strokeCap = StrokeCap.square;
-    canvas.drawLine(Offset(w * 0.45, h / 2), Offset(w * 0.95, h / 2), linePaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
