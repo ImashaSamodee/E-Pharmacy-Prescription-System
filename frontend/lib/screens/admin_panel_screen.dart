@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 
 class AdminPanelScreen extends StatefulWidget {
-  const AdminPanelScreen({super.key});
+  final VoidCallback? onLogout;
+  final VoidCallback? onSwitchToPatient;
+
+  const AdminPanelScreen({
+    super.key,
+    this.onLogout,
+    this.onSwitchToPatient,
+  });
 
   @override
   State<AdminPanelScreen> createState() => _AdminPanelScreenState();
@@ -273,11 +280,21 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Color(0xFF0F172A)),
-          onPressed: () => Navigator.pop(context),
+          icon: Icon(
+            Navigator.canPop(context) ? Icons.arrow_back_rounded : Icons.storefront_outlined,
+            color: const Color(0xFF0F172A),
+          ),
+          tooltip: Navigator.canPop(context) ? 'Back' : 'Patient Store View',
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else if (widget.onSwitchToPatient != null) {
+              widget.onSwitchToPatient!();
+            }
+          },
         ),
         title: const Text(
-          'Prescription Requests',
+          'Pharmacist Portal',
           style: TextStyle(
             color: Color(0xFF0F172A),
             fontWeight: FontWeight.bold,
@@ -288,8 +305,28 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded, color: Color(0xFF0D9488)),
+            tooltip: 'Refresh',
             onPressed: _fetchPrescriptions,
           ),
+          if (widget.onSwitchToPatient != null)
+            TextButton.icon(
+              onPressed: widget.onSwitchToPatient,
+              icon: const Icon(Icons.storefront_outlined, size: 16, color: Color(0xFF0D9488)),
+              label: const Text(
+                'Store',
+                style: TextStyle(
+                  color: Color(0xFF0D9488),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          if (widget.onLogout != null)
+            IconButton(
+              icon: const Icon(Icons.logout_rounded, color: Color(0xFFDC2626)),
+              tooltip: 'Logout',
+              onPressed: widget.onLogout,
+            ),
         ],
       ),
       body: Column(

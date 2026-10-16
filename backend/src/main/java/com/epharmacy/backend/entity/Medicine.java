@@ -32,7 +32,7 @@ public class Medicine {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    @Column(columnDefinition = "int default 0")
+    @Column
     @Builder.Default
     private Integer stock = 100;
 

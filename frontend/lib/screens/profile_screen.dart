@@ -195,7 +195,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final user = AppState().currentUser ??
         UserModel(
-          id: 2,
+          id: 1,
           name: 'Kasun Perera',
           email: 'kasun@email.com',
           role: 'PATIENT',

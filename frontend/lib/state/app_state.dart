@@ -22,55 +22,9 @@ class AppState extends ChangeNotifier {
   String get selectedCategory => _selectedCategory;
 
   void _initializeDefaultState() {
-    // Default logged in user Kasun Perera matching screenshots
-    _currentUser = UserModel(
-      id: 2,
-      name: 'Kasun Perera',
-      email: 'kasun@email.com',
-      role: 'PATIENT',
-      phone: '+94 77 123 4567',
-      address: 'No. 123, Galle Road, Colombo 04, Colombo',
-    );
-
-    // Initial default cart matching Screen 4 & Screen 5
-    _cartItems = [
-      CartItemModel(
-        medicineId: 1,
-        name: 'Panadol 500mg',
-        dosage: 'Paracetamol\nQty: 1 strip (10 tablets)',
-        price: 120.0,
-        quantity: 1,
-        isSelected: true,
-        confidence: '96%',
-      ),
-      CartItemModel(
-        medicineId: 5,
-        name: 'Amoxicillin 500mg',
-        dosage: 'Antibiotic\nQty: 1 strip (10 capsules)',
-        price: 280.0,
-        quantity: 1,
-        isSelected: true,
-        confidence: '95%',
-      ),
-      CartItemModel(
-        medicineId: 3,
-        name: 'Vitamin C 1000mg',
-        dosage: 'Supplement\nQty: 1 strip (10 tablets)',
-        price: 450.0,
-        quantity: 1,
-        isSelected: true,
-        confidence: '94%',
-      ),
-      CartItemModel(
-        medicineId: 6,
-        name: 'Cetirizine 10mg',
-        dosage: 'Allergy Relief\nQty: 1 strip (10 tablets)',
-        price: 180.0,
-        quantity: 1,
-        isSelected: true,
-        confidence: '92%',
-      ),
-    ];
+    _currentUser = null;
+    _cartItems = [];
+    _unreadNotifications = 0;
   }
 
   void setUser(UserModel user) {
@@ -81,6 +35,8 @@ class AppState extends ChangeNotifier {
 
   void logout() {
     _currentUser = null;
+    _cartItems = [];
+    _unreadNotifications = 0;
     ApiService().setToken(null);
     notifyListeners();
   }

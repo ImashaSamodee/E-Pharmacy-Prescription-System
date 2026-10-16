@@ -31,10 +31,10 @@ public class Prescription {
     @Column(name = "image_url", nullable = false, length = 500)
     private String imageUrl;
 
-    @Column(name = "extracted_text", columnDefinition = "LONGTEXT")
+    @Column(name = "extracted_text", columnDefinition = "TEXT")
     private String extractedText;
 
-    @Column(name = "extracted_medicines_json", columnDefinition = "LONGTEXT")
+    @Column(name = "extracted_medicines_json", columnDefinition = "TEXT")
     private String extractedMedicinesJson;
 
     @Column(length = 30)

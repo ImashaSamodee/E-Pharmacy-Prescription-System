@@ -196,6 +196,7 @@ class PrescriptionScanModel {
   final String prescriptionCode;
   final String imageUrl;
   final String? extractedText;
+  final String? extractedMedicinesJson;
   final String status;
   final int aiDetectedCount;
   final double? totalPrice;
@@ -207,6 +208,7 @@ class PrescriptionScanModel {
     required this.prescriptionCode,
     required this.imageUrl,
     this.extractedText,
+    this.extractedMedicinesJson,
     required this.status,
     required this.aiDetectedCount,
     this.totalPrice,
@@ -220,8 +222,9 @@ class PrescriptionScanModel {
       prescriptionCode: json['prescriptionCode'] ?? 'EP${1000 + (json['id'] is int ? json['id'] as int : 0)}',
       imageUrl: json['imageUrl'] ?? 'prescription.jpg',
       extractedText: json['extractedText'],
+      extractedMedicinesJson: json['extractedMedicinesJson']?.toString(),
       status: json['status'] ?? 'PENDING',
-      aiDetectedCount: json['aiDetectedCount'] is int ? json['aiDetectedCount'] : 3,
+      aiDetectedCount: json['aiDetectedCount'] is int ? json['aiDetectedCount'] : 0,
       totalPrice: json['totalPrice'] != null ? (json['totalPrice'] as num).toDouble() : null,
       pharmacistNotes: json['pharmacistNotes'],
       createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt'].toString()) ?? DateTime.now() : DateTime.now(),

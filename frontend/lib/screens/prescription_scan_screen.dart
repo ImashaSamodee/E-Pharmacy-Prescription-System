@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -18,12 +19,7 @@ class PrescriptionScanScreen extends StatefulWidget {
 class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
   bool _isLoading = false;
   List<PrescriptionScanModel> _recentScans = [];
-
-  List<Map<String, dynamic>> _detectedMedicines = [
-    {'name': 'Panadol 500mg', 'dosage': '1 strip (10 tablets)', 'price': 120.0, 'confidence': '96%'},
-    {'name': 'Amoxicillin 500mg', 'dosage': '1 strip (10 capsules)', 'price': 280.0, 'confidence': '95%'},
-    {'name': 'Cetirizine 10mg', 'dosage': '1 strip (10 tablets)', 'price': 180.0, 'confidence': '92%'},
-  ];
+  List<Map<String, dynamic>> _detectedMedicines = [];
 
   @override
   void initState() {
@@ -39,6 +35,18 @@ class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
         if (mounted) {
           setState(() {
             _recentScans = list;
+            // Load detected medicines from the latest scan if available
+            if (_detectedMedicines.isEmpty && list.isNotEmpty) {
+              final latest = list.first;
+              if (latest.extractedMedicinesJson != null && latest.extractedMedicinesJson!.isNotEmpty) {
+                try {
+                  final decoded = jsonDecode(latest.extractedMedicinesJson!);
+                  if (decoded is List) {
+                    _detectedMedicines = decoded.map((e) => Map<String, dynamic>.from(e)).toList();
+                  }
+                } catch (_) {}
+              }
+            }
           });
         }
       } catch (_) {}
@@ -54,7 +62,7 @@ class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
 
     try {
       final user = AppState().currentUser;
-      final userId = user?.id ?? 2;
+      final userId = user?.id ?? 1;
       final bytes = await pickedFile.readAsBytes();
 
       final res = await ApiService().uploadPrescription(
@@ -63,33 +71,33 @@ class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
         userId,
       );
 
-      // Parse extracted medicines from response
+      // Parse extracted medicines from real response
       List<CartItemModel> extractedCart = [];
+      List<Map<String, dynamic>> newDetected = [];
 
-      // If json is present
       if (res['extractedMedicinesJson'] != null && res['extractedMedicinesJson'].toString().isNotEmpty) {
-        // We can parse or fallback to structured list
+        try {
+          final decoded = jsonDecode(res['extractedMedicinesJson'].toString());
+          if (decoded is List) {
+            for (var item in decoded) {
+              final map = Map<String, dynamic>.from(item);
+              newDetected.add(map);
+              extractedCart.add(CartItemModel(
+                name: map['name']?.toString() ?? 'Prescribed Medicine',
+                dosage: map['dosage']?.toString() ?? '1 strip (10 tablets)',
+                price: (map['price'] is num) ? (map['price'] as num).toDouble() : 150.0,
+                quantity: 1,
+                isSelected: true,
+                confidence: map['confidence']?.toString() ?? '95%',
+              ));
+            }
+          }
+        } catch (_) {}
       }
 
-      // Populate detected list
-      List<Map<String, dynamic>> newDetected = [
-        {'name': 'Panadol 500mg', 'dosage': '1 strip (10 tablets)', 'price': 120.0, 'confidence': '96%'},
-        {'name': 'Amoxicillin 500mg', 'dosage': '1 strip (10 capsules)', 'price': 280.0, 'confidence': '95%'},
-        {'name': 'Cetirizine 10mg', 'dosage': '1 strip (10 tablets)', 'price': 180.0, 'confidence': '92%'},
-      ];
-
-      for (var d in newDetected) {
-        extractedCart.add(CartItemModel(
-          name: d['name'],
-          dosage: d['dosage'],
-          price: (d['price'] as num).toDouble(),
-          quantity: 1,
-          isSelected: true,
-          confidence: d['confidence'],
-        ));
+      if (extractedCart.isNotEmpty) {
+        AppState().setExtractedCartItems(extractedCart);
       }
-
-      AppState().setExtractedCartItems(extractedCart);
 
       setState(() {
         _detectedMedicines = newDetected;
@@ -100,19 +108,20 @@ class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Prescription processed! AI detected 3 medicines.'),
-            backgroundColor: Color(0xFF0D9488),
+          SnackBar(
+            content: Text('Prescription processed! AI detected ${newDetected.length} medicines.'),
+            backgroundColor: const Color(0xFF0D9488),
           ),
         );
 
-        // Navigate to Extracted Medicines Screen
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (ctx) => const ExtractedMedicinesScreen(),
-          ),
-        );
+        if (extractedCart.isNotEmpty) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (ctx) => const ExtractedMedicinesScreen(),
+            ),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -332,29 +341,34 @@ class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
               ..._recentScans.take(3).map((scan) => _buildRecentScanCard(
                     title: 'Scan #${scan.prescriptionCode}',
                     subtitle: '${dateFormat.format(scan.createdAt)} • ${scan.aiDetectedCount} medicines',
-                    badge: scan.status == 'APPROVED' ? 'Approved' : 'Extracted',
+                    badge: scan.status == 'APPROVED' ? 'Approved' : (scan.status == 'REJECTED' ? 'Rejected' : 'Extracted'),
                     onTap: _openExtractedScreen,
                   ))
-            else ...[
-              _buildRecentScanCard(
-                title: 'Scan #EP1024',
-                subtitle: '12 Oct 2026 • 3 medicines',
-                badge: 'Extracted',
-                onTap: _openExtractedScreen,
+            else
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                child: Column(
+                  children: const [
+                    Icon(Icons.document_scanner_outlined, color: Color(0xFF94A3B8), size: 36),
+                    SizedBox(height: 8),
+                    Text(
+                      'No recent prescriptions found',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF64748B)),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Upload a prescription above to digitize it.',
+                      style: TextStyle(fontSize: 12, color: Color(0xFF94A3B8)),
+                    ),
+                  ],
+                ),
               ),
-              _buildRecentScanCard(
-                title: 'Scan #EP1018',
-                subtitle: '08 Oct 2026 • 2 medicines',
-                badge: 'Extracted',
-                onTap: _openExtractedScreen,
-              ),
-              _buildRecentScanCard(
-                title: 'Scan #EP1006',
-                subtitle: '25 Sep 2026 • 4 medicines',
-                badge: 'Extracted',
-                onTap: _openExtractedScreen,
-              ),
-            ],
 
             const SizedBox(height: 20),
 
@@ -370,72 +384,96 @@ class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
                     color: Color(0xFF0F172A),
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.arrow_forward_rounded, color: Color(0xFF0D9488)),
-                  onPressed: _openExtractedScreen,
-                ),
+                if (_detectedMedicines.isNotEmpty)
+                  IconButton(
+                    icon: const Icon(Icons.arrow_forward_rounded, color: Color(0xFF0D9488)),
+                    onPressed: _openExtractedScreen,
+                  ),
               ],
             ),
             const SizedBox(height: 8),
 
             // Detected Medicines Items
-            ..._detectedMedicines.map((med) => Container(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: const Color(0xFFE2E8F0)),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFCCFBF1),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Icon(Icons.medication_rounded, size: 20, color: Color(0xFF0F766E)),
-                          ),
-                          const SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                med['name'],
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF0F172A)),
-                              ),
-                              Text(
-                                med['dosage'],
-                                style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFDCFCE7),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
+            if (_detectedMedicines.isNotEmpty)
+              ..._detectedMedicines.map((med) => Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
                           children: [
-                            const Icon(Icons.check_circle_rounded, color: Color(0xFF15803D), size: 14),
-                            const SizedBox(width: 4),
-                            Text(
-                              med['confidence'],
-                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF15803D)),
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFCCFBF1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(Icons.medication_rounded, size: 20, color: Color(0xFF0F766E)),
+                            ),
+                            const SizedBox(width: 12),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  med['name']?.toString() ?? '',
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF0F172A)),
+                                ),
+                                Text(
+                                  med['dosage']?.toString() ?? '',
+                                  style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+                                ),
+                              ],
                             ),
                           ],
                         ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFDCFCE7),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.check_circle_rounded, color: Color(0xFF15803D), size: 14),
+                              const SizedBox(width: 4),
+                              Text(
+                                med['confidence']?.toString() ?? '95%',
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF15803D)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ))
+            else
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                child: Row(
+                  children: const [
+                    Icon(Icons.info_outline_rounded, color: Color(0xFF0D9488), size: 22),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Upload a prescription above to extract and verify medicines with AI.',
+                        style: TextStyle(fontSize: 12.5, color: Color(0xFF475569)),
                       ),
-                    ],
-                  ),
-                )),
+                    ),
+                  ],
+                ),
+              ),
 
             const SizedBox(height: 16),
 

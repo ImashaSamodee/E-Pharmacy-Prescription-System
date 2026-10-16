@@ -5,6 +5,7 @@ import 'screens/extracted_medicines_screen.dart';
 import 'screens/order_history_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/admin_panel_screen.dart';
 import 'state/app_state.dart';
 
 void main() {
@@ -48,7 +49,8 @@ class RootNavigation extends StatefulWidget {
 
 class _RootNavigationState extends State<RootNavigation> {
   int _currentIndex = 0;
-  bool _isAuthenticated = true; // Defaults to logged-in user Kasun for seamless preview
+  bool _isAuthenticated = false; // Opens Login Screen so user can choose their Role & Account
+  bool _pharmacistViewingPatientStore = false;
 
   void _onTabTapped(int index) {
     setState(() {
@@ -76,11 +78,36 @@ class _RootNavigationState extends State<RootNavigation> {
               setState(() {
                 _isAuthenticated = true;
                 _currentIndex = 0;
+                _pharmacistViewingPatientStore = false;
               });
             },
           );
         }
 
+        final user = appState.currentUser!;
+        final isPharmacist = user.role.toUpperCase() == 'PHARMACIST' ||
+            user.role.toUpperCase() == 'ADMIN';
+
+        // 1. Direct Pharmacist Dashboard if user has PHARMACIST or ADMIN role
+        if (isPharmacist && !_pharmacistViewingPatientStore) {
+          return AdminPanelScreen(
+            onLogout: () {
+              appState.logout();
+              setState(() {
+                _isAuthenticated = false;
+                _pharmacistViewingPatientStore = false;
+              });
+            },
+            onSwitchToPatient: () {
+              setState(() {
+                _pharmacistViewingPatientStore = true;
+                _currentIndex = 0;
+              });
+            },
+          );
+        }
+
+        // 2. Patient UI (or Pharmacist previewing customer store)
         final List<Widget> screens = [
           HomeScreen(
             onTabChange: _onTabTapped,
@@ -96,17 +123,69 @@ class _RootNavigationState extends State<RootNavigation> {
           ProfileScreen(
             onBack: () => _onTabTapped(0),
             onLogout: () {
+              appState.logout();
               setState(() {
                 _isAuthenticated = false;
+                _pharmacistViewingPatientStore = false;
               });
             },
           ),
         ];
 
         return Scaffold(
-          body: IndexedStack(
-            index: _currentIndex,
-            children: screens,
+          body: Stack(
+            children: [
+              IndexedStack(
+                index: _currentIndex,
+                children: screens,
+              ),
+
+              // Pharmacist Quick Return Badge when previewing customer store
+              if (isPharmacist && _pharmacistViewingPatientStore)
+                Positioned(
+                  top: MediaQuery.of(context).padding.top + 6,
+                  left: 16,
+                  right: 16,
+                  child: Material(
+                    elevation: 6,
+                    borderRadius: BorderRadius.circular(12),
+                    color: const Color(0xFF0F172A),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.shield_outlined, color: Color(0xFF2DD4BF), size: 18),
+                          const SizedBox(width: 8),
+                          const Expanded(
+                            child: Text(
+                              'Pharmacist: Store Preview',
+                              style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                _pharmacistViewingPatientStore = false;
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF0D9488),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Text(
+                                'Return to Panel',
+                                style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
           bottomNavigationBar: Container(
             decoration: BoxDecoration(
@@ -180,4 +259,4 @@ class _RootNavigationState extends State<RootNavigation> {
       },
     );
   }
-}
+}

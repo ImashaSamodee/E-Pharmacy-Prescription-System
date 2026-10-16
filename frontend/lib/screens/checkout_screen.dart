@@ -94,7 +94,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       // 2. Place order on backend
       final order = await ApiService().placeOrder(
-        userId: appState.currentUser?.id ?? 2,
+        userId: appState.currentUser?.id ?? 1,
         customerName: _customerName,
         customerPhone: _customerPhone,
         deliveryAddress: _deliveryAddress,

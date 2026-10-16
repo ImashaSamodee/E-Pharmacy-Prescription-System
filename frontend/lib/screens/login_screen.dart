@@ -18,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
+  String _selectedRole = 'PATIENT'; // 'PATIENT' or 'PHARMACIST'
 
   final _emailController = TextEditingController(text: 'kasun@email.com');
   final _passwordController = TextEditingController(text: '123456');
@@ -35,6 +36,21 @@ class _LoginScreenState extends State<LoginScreen> {
     _phoneController.dispose();
     _addressController.dispose();
     super.dispose();
+  }
+
+  void _switchRole(String role) {
+    setState(() {
+      _selectedRole = role;
+      if (!_isRegisterMode) {
+        if (role == 'PHARMACIST') {
+          _emailController.text = 'pharmacist@medicare.lk';
+          _passwordController.text = 'admin123';
+        } else {
+          _emailController.text = 'kasun@email.com';
+          _passwordController.text = '123456';
+        }
+      }
+    });
   }
 
   Future<void> _handleAuth() async {
@@ -70,13 +86,14 @@ class _LoginScreenState extends State<LoginScreen> {
           password,
           _phoneController.text.trim().isEmpty ? '+94 77 123 4567' : _phoneController.text.trim(),
           _addressController.text.trim().isEmpty ? 'Colombo, Sri Lanka' : _addressController.text.trim(),
+          role: _selectedRole,
         );
         AppState().setUser(user);
-        _showSnackbar('Account created successfully! Welcome, ${user.name}');
+        _showSnackbar('Account created successfully as ${user.role}! Welcome, ${user.name}');
       } else {
         final user = await ApiService().login(email, password);
         AppState().setUser(user);
-        _showSnackbar('Welcome back, ${user.name}!');
+        _showSnackbar('Welcome back, ${user.name} (${user.role})!');
       }
       widget.onLoginSuccess();
     } catch (e) {
@@ -90,7 +107,10 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _quickLogin(String email, String password) {
+  void _quickLogin(String email, String password, {String? role}) {
+    if (role != null) {
+      _selectedRole = role;
+    }
     _emailController.text = email;
     _passwordController.text = password;
     setState(() => _isRegisterMode = false);
@@ -151,9 +171,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     onSelected: (val) {
                       if (val == 'kasun') {
-                        _quickLogin('kasun@email.com', '123456');
+                        _switchRole('PATIENT');
+                        _quickLogin('kasun@email.com', '123456', role: 'PATIENT');
                       } else if (val == 'admin') {
-                        _quickLogin('pharmacist@medicare.lk', 'admin123');
+                        _switchRole('PHARMACIST');
+                        _quickLogin('pharmacist@medicare.lk', 'admin123', role: 'PHARMACIST');
                       }
                     },
                     itemBuilder: (context) => [
@@ -227,7 +249,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 10),
+
+              // Role Selector Toggle
+              _buildRoleSelector(),
+              const SizedBox(height: 10),
 
               // Form fields
               Padding(
@@ -492,7 +518,11 @@ class _LoginScreenState extends State<LoginScreen> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
+
+          // Role Selector Toggle
+          _buildRoleSelector(),
+          const SizedBox(height: 10),
 
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 22.0),
@@ -639,6 +669,107 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 24),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Interactive Role Selector Toggle (Patient vs Pharmacist)
+  Widget _buildRoleSelector() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 22.0),
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F5F9),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(10),
+              onTap: () => _switchRole('PATIENT'),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(vertical: 9),
+                decoration: BoxDecoration(
+                  color: _selectedRole == 'PATIENT' ? Colors.white : Colors.transparent,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: _selectedRole == 'PATIENT'
+                      ? [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.06),
+                            blurRadius: 4,
+                            offset: const Offset(0, 1),
+                          ),
+                        ]
+                      : [],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.person_rounded,
+                      size: 17,
+                      color: _selectedRole == 'PATIENT' ? const Color(0xFF0D9488) : const Color(0xFF64748B),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Patient',
+                      style: TextStyle(
+                        fontWeight: _selectedRole == 'PATIENT' ? FontWeight.bold : FontWeight.w600,
+                        color: _selectedRole == 'PATIENT' ? const Color(0xFF0F172A) : const Color(0xFF64748B),
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(10),
+              onTap: () => _switchRole('PHARMACIST'),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(vertical: 9),
+                decoration: BoxDecoration(
+                  color: _selectedRole == 'PHARMACIST' ? Colors.white : Colors.transparent,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: _selectedRole == 'PHARMACIST'
+                      ? [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.06),
+                            blurRadius: 4,
+                            offset: const Offset(0, 1),
+                          ),
+                        ]
+                      : [],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.medical_services_rounded,
+                      size: 17,
+                      color: _selectedRole == 'PHARMACIST' ? const Color(0xFF0D9488) : const Color(0xFF64748B),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Pharmacist',
+                      style: TextStyle(
+                        fontWeight: _selectedRole == 'PHARMACIST' ? FontWeight.bold : FontWeight.w600,
+                        color: _selectedRole == 'PHARMACIST' ? const Color(0xFF0F172A) : const Color(0xFF64748B),
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ],
